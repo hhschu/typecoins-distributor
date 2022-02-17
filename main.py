@@ -4,7 +4,7 @@ from typing import List
 import requests
 
 
-def current_balace(sess) -> int:
+def current_balace(sess: requests.Session) -> int:
     resp = sess.get("https://bonus.ly/api/v1/users/me").json()
     return resp["result"]["giving_balance"]
 
@@ -17,7 +17,7 @@ def recipients_to_message(recipients: List[str]) -> str:
     return message
 
 
-def give(sess, total_amount: int, recipients: List[str]) -> None:
+def give(sess: requests.Session, total_amount: int, recipients: List[str]) -> None:
     amount = total_amount // len(recipients)
     payload = {
         "reason": f"+{amount} {recipients_to_message(recipients)} for great #teamwork #yourock!"
