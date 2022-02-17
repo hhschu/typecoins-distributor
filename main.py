@@ -28,8 +28,9 @@ def give(sess: requests.Session, total_amount: int, recipients: List[str]) -> No
 
 def main() -> None:
     team = ["@manuel.romero", "@pablo.reynel"]
-    with requests.Session() as sess:
-        sess.headers.update({"Authorization": f"Bearer {os.environ['BONUSLY_API_TOKEN']}"})
+    api_token = os.environ["BONUSLY_API_TOKEN"]
+    hearders = {"Authorization": f"Bearer {api_token}"}
+    with requests.Session(headers=hearders) as sess:
         balance = current_balace(sess)
         give(sess, balance, team)
 
