@@ -51,8 +51,8 @@ def main() -> None:
         "@albert.franzi",
     ]
     api_token = os.environ["BONUSLY_API_TOKEN"]
-    hearders = {"Authorization": f"Bearer {api_token}"}
-    with requests.Session(headers=hearders) as sess:
+    with requests.Session() as sess:
+        sess.headers.update({"Authorization": f"Bearer {api_token}"})
         balance = current_balace(sess)
         give(sess, balance, team)
 
