@@ -14,6 +14,9 @@ jobs:
       - name: Check last day of month
         id: lastday
         run: echo "::set-output name=lastday::$(date -d +1day +%d) -eq 1"
+      - name: Testout
+        id: lastday
+        run: echo "$(date -d +1day +%d) -eq 1"
   give-typecoins:
     needs: check-last-day
     if: needs.check-last-day.outputs.lastday == 'true'
