@@ -13,13 +13,10 @@ jobs:
     steps:
       - name: Check last day of month
         id: lastday
-        run: echo "::set-output name=lastday::$(date -d +1day +%d) -eq 1"
-      - name: Testout
-        id: dd
-        run: echo "$(date -d +1day +%d) -eq 1"
+        run: echo "::set-output name=lastday::$(($(date -d +1day +%d) == 1))
   give-typecoins:
     needs: check-last-day
-    if: needs.check-last-day.outputs.lastday == 'true'
+    if: needs.check-last-day.outputs.lastday == 1
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
