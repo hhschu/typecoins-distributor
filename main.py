@@ -27,7 +27,29 @@ def give(sess: requests.Session, total_amount: int, recipients: List[str]) -> No
 
 
 def main() -> None:
-    team = ["@manuel.romero", "@pablo.reynel"]
+    team = [
+        "@cecile.arnaud",
+        "@connell.blackett",
+        "@elena.pellin",
+        "@eyuel.muse",
+        "@frederic.darmuzey",
+        "@ilmari.aalto",
+        "@iris.miliaraki",
+        "@manuel.romero",
+        "@oriol.monereo",
+        "@pablo.reynel",
+        "@sarthak.jain",
+        "@stephani.palomino",
+        "@xavier.rodriguez",
+        "@victor.capel",
+        "@ruben.berenguel",
+        "@ruben.aguilar",
+        "@robert.serrat",
+        "@matthew.crooks",
+        "@javier.monton",
+        "@giulia.brambilla",
+        "@albert.franzi",
+    ]
     api_token = os.environ["BONUSLY_API_TOKEN"]
     hearders = {"Authorization": f"Bearer {api_token}"}
     with requests.Session(headers=hearders) as sess:
