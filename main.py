@@ -35,7 +35,6 @@ def main() -> None:
         "@frederic.darmuzey",
         "@ilmari.aalto",
         "@iris.miliaraki",
-        "@manuel.romero",
         "@oriol.monereo",
         "@pablo.reynel",
         "@sarthak.jain",
