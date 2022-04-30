@@ -20,7 +20,7 @@ def recipients_to_message(recipients: List[str]) -> str:
 def give(sess: requests.Session, total_amount: int, recipients: List[str]) -> None:
     amount = total_amount // len(recipients)
     payload = {
-        "reason": f"+{amount} {recipients_to_message(recipients)} for great #teamwork #yourock!"
+        "reason": f"+{amount} {recipients_to_message(recipients)} #wintogether"
     }
     resp = sess.post("https://bonus.ly/api/v1/bonuses", json=payload)
     resp.raise_for_status()
