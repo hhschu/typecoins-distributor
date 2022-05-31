@@ -47,7 +47,6 @@ def main() -> None:
         "@matthew.crooks",
         "@javier.monton",
         "@giulia.brambilla",
-        "@albert.franzi",
     ]
     api_token = os.environ["BONUSLY_API_TOKEN"]
     with requests.Session() as sess:
