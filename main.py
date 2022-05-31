@@ -43,7 +43,6 @@ def main() -> None:
         "@victor.capel",
         "@ruben.berenguel",
         "@ruben.aguilar",
-        "@robert.serrat",
         "@matthew.crooks",
         "@javier.monton",
         "@giulia.brambilla",
