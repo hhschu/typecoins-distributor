@@ -23,7 +23,10 @@ def give(sess: requests.Session, total_amount: int, recipients: List[str]) -> No
         "reason": f"+{amount} {recipients_to_message(recipients)} #wintogether"
     }
     resp = sess.post("https://bonus.ly/api/v1/bonuses", json=payload)
-    resp.raise_for_status()
+    content = resp.json()
+
+    if not content["success"]:
+        raise RuntimeError(content["message"])
 
 
 def main() -> None:
