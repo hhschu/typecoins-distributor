@@ -1,9 +1,24 @@
 import os
+import random
 
 import requests
 
-OPEN_AI_API_TOKEN = os.environ["OPEN_AI_API_TOKEN"]
 BONUSLY_API_TOKEN = os.environ["BONUSLY_API_TOKEN"]
+OPEN_AI_API_TOKEN = os.environ["OPEN_AI_API_TOKEN"]
+TENOR_API_TOKEN = os.environ["TENOR_API_TOKEN"]
+
+
+def pick_gif(sess: requests.Session, search_term: str, limit: int = 50) -> str:
+    params = {
+        "q": search_term,
+        "key": TENOR_API_TOKEN,
+        "client_key": "typecoin",
+        "limit": limit,
+    }
+    resp = sess.get("https://tenor.googleapis.com/v2/search", params=params)
+    content = resp.json()
+    gif = random.choice(content["results"])["media_formats"]["gif"]["url"]
+    return gif
 
 
 def generate_message(
@@ -63,13 +78,18 @@ def recipients_to_message(recipients: list[str]) -> str:
 
 
 def give(
-    sess: requests.Session, total_amount: int, recipients: list[str], message: str
+    sess: requests.Session,
+    total_amount: int,
+    recipients: list[str],
+    message: str,
+    img_url: str = None,
 ) -> None:
     amount = total_amount // len(recipients)
-    payload = {
-        "reason": f"+{amount} {recipients_to_message(recipients)} {message} #wintogether"
-    }
-    resp = sess.post("https://bonus.ly/api/v1/bonuses", json=payload)
+    reason = f"+{amount} {recipients_to_message(recipients)} {message} #wintogether"
+    if img_url:
+        reason += f" ![]({img_url})"
+
+    resp = sess.post("https://bonus.ly/api/v1/bonuses", json={"reason": reason})
     content = resp.json()
 
     if not content["success"]:
@@ -86,7 +106,7 @@ def main() -> None:
         "@sarthak.jain",
         "@matthew.crooks",
     ]
-    with requests.Session() as bonusly_sess, requests.Session() as open_ai_sess:
+    with requests.Session() as tenor_sess, requests.Session() as bonusly_sess, requests.Session() as open_ai_sess:
         bonusly_sess.headers.update({"Authorization": f"Bearer {BONUSLY_API_TOKEN}"})
         open_ai_sess.headers.update({"Authorization": f"Bearer {OPEN_AI_API_TOKEN}"})
         team = list_recipients(bonusly_sess, "data enablement") + core_analytics
@@ -101,7 +121,13 @@ def main() -> None:
             "Write something to thank my team for the work they have done in the past month!",
             temperature=0.9,
         )
-        give(bonusly_sess, my_balance, team, message)
+        give(
+            bonusly_sess,
+            my_balance,
+            team,
+            message,
+            img_url=pick_gif(tenor_sess, "high five"),
+        )
 
 
 if __name__ == "__main__":
