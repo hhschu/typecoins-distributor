@@ -92,6 +92,10 @@ def main() -> None:
         team = list_recipients(bonusly_sess, "data enablement") + core_analytics
         team.remove("@david.chu")
         my_balance = current_balace(bonusly_sess)
+        if my_balance > len(team):
+            raise RuntimeError(
+                f"Current balance {my_balance:,} is too low for {len(team)} recipients."
+            )
         message = generate_message(
             open_ai_sess,
             "Write something to thank my team for the work they have done in the past month!",
