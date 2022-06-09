@@ -1,0 +1,8 @@
+[flake8]
+extend-ignore = E203, E266, E501, B008
+# Ignore B008 because fastapi uses function calls
+# in argument defaults, such as Query(), Depands(),
+# extensively.
+max-line-length = 80
+max-complexity = 12
+select = B,C,E,F,W,T4,B9
