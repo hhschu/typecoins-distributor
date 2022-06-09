@@ -109,18 +109,22 @@ def main() -> None:
     with requests.Session() as tenor_sess, requests.Session() as bonusly_sess, requests.Session() as open_ai_sess:
         bonusly_sess.headers.update({"Authorization": f"Bearer {BONUSLY_API_TOKEN}"})
         open_ai_sess.headers.update({"Authorization": f"Bearer {OPEN_AI_API_TOKEN}"})
+
         team = list_recipients(bonusly_sess, "data enablement") + core_analytics
         team.remove("@david.chu")
+
         my_balance = current_balace(bonusly_sess)
         if my_balance < len(team):
             raise RuntimeError(
                 f"Current balance {my_balance:,} is too low for {len(team)} recipients."
             )
+
         message = generate_message(
             open_ai_sess,
             "Write something to thank my team for the work they have done in the past month!",
             temperature=0.9,
         )
+
         give(
             bonusly_sess,
             my_balance,
