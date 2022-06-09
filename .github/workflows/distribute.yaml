@@ -34,4 +34,4 @@ jobs:
           BONUSLY_API_TOKEN: ${{ secrets.BONUSLY_API_TOKEN }}
           OPEN_AI_API_TOKEN: ${{ secrets.OPEN_AI_API_TOKEN }}
           TENOR_API_TOKEN: ${{ secrets.TENOR_API_TOKEN }}
-        run: poetry run python main.py
+        run: PYTHONPATH=. poetry run python typecoin/main.py
