@@ -8,10 +8,14 @@ TOKEN = os.environ["OPEN_AI_API_TOKEN"]
 
 
 def generate_message(
-    prompt: str, *, temperature: float = 1, max_tokens: int = 256
+    prompt: str,
+    *,
+    model: str = "text-davinci-002",
+    temperature: float = 1,
+    max_tokens: int = 256,
 ) -> str:
     payload = {
-        "model": "text-davinci-002",
+        "model": model,
         "prompt": prompt + "\n\n",
         "temperature": temperature,
         "max_tokens": max_tokens,
