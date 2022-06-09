@@ -38,8 +38,9 @@ def list_recipients(sess: requests.Session, department: str) -> list[str]:
         "limit": limit,
     }
     while True:
-        resp = sess.get("https://bonus.ly/api/v1/users", params=params).json()
-        users = [f'@{user["username"]}' for user in resp["result"]]
+        resp = sess.get("https://bonus.ly/api/v1/users", params=params)
+        content = resp.json()
+        users = [f'@{user["username"]}' for user in content["result"]]
         recipients.extend(users)
         if len(users) < limit:
             break
@@ -48,8 +49,9 @@ def list_recipients(sess: requests.Session, department: str) -> list[str]:
 
 
 def current_balace(sess: requests.Session) -> int:
-    resp = sess.get("https://bonus.ly/api/v1/users/me").json()
-    return resp["result"]["giving_balance"]
+    resp = sess.get("https://bonus.ly/api/v1/users/me")
+    content = resp.json()
+    return content["result"]["giving_balance"]
 
 
 def recipients_to_message(recipients: list[str]) -> str:
