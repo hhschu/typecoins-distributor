@@ -2,6 +2,31 @@ import os
 
 import requests
 
+OPEN_AI_API_TOKEN = os.environ["OPEN_AI_API_TOKEN"]
+BONUSLY_API_TOKEN = os.environ["BONUSLY_API_TOKEN"]
+
+
+def generate_message(
+    sess: requests.Session,
+    prompt: str,
+    *,
+    temperature: float = 1,
+    max_tokens: int = 256,
+) -> str:
+    payload = {
+        "model": "text-davinci-002",
+        "prompt": prompt + "\n\n",
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+    }
+    resp = sess.post("https://api.openai.com/v1/completions", json=payload)
+    content = resp.json()
+
+    if err := content.get("error"):
+        raise RuntimeError(err["message"])
+
+    return content["choices"][0]["text"].strip()
+
 
 def list_recipients(sess: requests.Session, department: str) -> list[str]:
     recipients = []
@@ -35,9 +60,13 @@ def recipients_to_message(recipients: list[str]) -> str:
     return message
 
 
-def give(sess: requests.Session, total_amount: int, recipients: list[str]) -> None:
+def give(
+    sess: requests.Session, total_amount: int, recipients: list[str], message: str
+) -> None:
     amount = total_amount // len(recipients)
-    payload = {"reason": f"+{amount} {recipients_to_message(recipients)} #wintogether"}
+    payload = {
+        "reason": f"+{amount} {recipients_to_message(recipients)} {message} #wintogether"
+    }
     resp = sess.post("https://bonus.ly/api/v1/bonuses", json=payload)
     content = resp.json()
 
@@ -55,13 +84,18 @@ def main() -> None:
         "@sarthak.jain",
         "@matthew.crooks",
     ]
-    api_token = os.environ["BONUSLY_API_TOKEN"]
-    with requests.Session() as sess:
-        sess.headers.update({"Authorization": f"Bearer {api_token}"})
-        team = list_recipients(sess, "data enablement") + core_analytics
+    with requests.Session() as bonusly_sess, requests.Session() as open_ai_sess:
+        bonusly_sess.headers.update({"Authorization": f"Bearer {BONUSLY_API_TOKEN}"})
+        open_ai_sess.headers.update({"Authorization": f"Bearer {OPEN_AI_API_TOKEN}"})
+        team = list_recipients(bonusly_sess, "data enablement") + core_analytics
         team.remove("@david.chu")
-        my_balance = current_balace(sess)
-        give(sess, my_balance, team)
+        my_balance = current_balace(bonusly_sess)
+        message = generate_message(
+            open_ai_sess,
+            "Write something to thank my team for the work they have done in the past month!",
+            temperature=0.9,
+        )
+        give(bonusly_sess, my_balance, team, message)
 
 
 if __name__ == "__main__":

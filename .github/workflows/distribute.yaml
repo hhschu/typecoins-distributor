@@ -31,4 +31,5 @@ jobs:
       - name: Run Script
         env:
           BONUSLY_API_TOKEN: ${{ secrets.BONUSLY_API_TOKEN }}
+          OPEN_AI_API_TOKEN: ${{ secrets.OPEN_AI_API_TOKEN }}
         run: poetry run python main.py
