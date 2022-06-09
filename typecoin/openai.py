@@ -1,12 +1,14 @@
-import requests
+import os
+from urllib.parse import urljoin
+
+from typecoin import network
+
+URL = "https://api.openai.com/v1/"
+TOKEN = os.environ["OPEN_AI_API_TOKEN"]
 
 
 def generate_message(
-    sess: requests.Session,
-    prompt: str,
-    *,
-    temperature: float = 1,
-    max_tokens: int = 256,
+    prompt: str, *, temperature: float = 1, max_tokens: int = 256
 ) -> str:
     payload = {
         "model": "text-davinci-002",
@@ -14,8 +16,9 @@ def generate_message(
         "temperature": temperature,
         "max_tokens": max_tokens,
     }
-    resp = sess.post("https://api.openai.com/v1/completions", json=payload)
-    content = resp.json()
+    content = network.post(
+        urljoin(URL, "completions"), json=payload, bearer_token=TOKEN
+    )
 
     if err := content.get("error"):
         raise RuntimeError(err["message"])

@@ -1,9 +1,14 @@
-import requests
+import os
+from urllib.parse import urljoin
+
+from typecoin import network
+
+URL = "https://bonus.ly/api/v1/"
+TOKEN = os.environ["BONUSLY_API_TOKEN"]
 
 
-def list_users(sess: requests.Session, department: str) -> list[str]:
+def list_users(department: str, *, limit: int = 100) -> list[str]:
     users = []
-    limit = 100
     params = {
         "skip": 0,
         "user_mode": "normal",
@@ -11,19 +16,17 @@ def list_users(sess: requests.Session, department: str) -> list[str]:
         "limit": limit,
     }
     while True:
-        resp = sess.get("https://bonus.ly/api/v1/users", params=params)
-        content = resp.json()
+        content = network.get(urljoin(URL, "users"), params=params, bearer_token=TOKEN)
         users = [f'@{user["username"]}' for user in content["result"]]
         users.extend(users)
         if len(users) < limit:
             break
-        params["skip"] += limit
+        params["skip"] += limit  # type: ignore
     return users
 
 
-def my_current_balance(sess: requests.Session) -> int:
-    resp = sess.get("https://bonus.ly/api/v1/users/me")
-    content = resp.json()
+def my_current_balance() -> int:
+    content = network.get(urljoin(URL, "users/me"), bearer_token=TOKEN)
     return content["result"]["giving_balance"]
 
 
@@ -36,11 +39,7 @@ def recipients_to_message(recipients: list[str]) -> str:
 
 
 def create_bonus(
-    sess: requests.Session,
-    total_amount: int,
-    recipients: list[str],
-    message: str,
-    img_url: str = None,
+    total_amount: int, recipients: list[str], message: str, img_url: str = None
 ) -> None:
     amount = total_amount // len(recipients)
     reason = f"+{amount} {recipients_to_message(recipients)} {message} #wintogether"
@@ -48,8 +47,7 @@ def create_bonus(
         reason += f" ![]({img_url})"
 
     print(reason)
-    # resp = sess.post("https://bonus.ly/api/v1/bonuses", json={"reason": reason})
-    # content = resp.json()
+    # content = network.post(urljoin(URL, "bonuses"), json={"reason": reason}, bearer_token=TOKEN)
 
     # if not content["success"]:
     #     raise RuntimeError(content["message"])
