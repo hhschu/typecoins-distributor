@@ -46,8 +46,7 @@ def create_bonus(
     if img_url:
         reason += f" ![]({img_url})"
 
-    print(reason)
-    # content = network.post(urljoin(URL, "bonuses"), json={"reason": reason}, bearer_token=TOKEN)
+    content = network.post(urljoin(URL, "bonuses"), json={"reason": reason}, bearer_token=TOKEN)
 
-    # if not content["success"]:
-    #     raise RuntimeError(content["message"])
+    if not content["success"]:
+        raise RuntimeError(content["message"])
