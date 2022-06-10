@@ -1,5 +1,6 @@
 import json as json_lib
 from functools import partial
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -33,10 +34,14 @@ def request(
     if bearer_token:
         headers["Authorization"] = f"Bearer {bearer_token}"
 
-    with urlopen(Request(url=url, method=method, headers=headers, data=data)) as f:
-        response = f.read().decode("utf-8")
-    content = json_lib.loads(response)
-    return content
+    try:
+        with urlopen(Request(url=url, method=method, headers=headers, data=data)) as f:
+            response = f.read().decode("utf-8")
+    except HTTPError as err:
+        print(err.read())
+    else:
+        content = json_lib.loads(response)
+        return content
 
 
 get = partial(request, method="GET")
