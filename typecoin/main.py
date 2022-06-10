@@ -3,6 +3,19 @@ from random import choices
 from typecoin import bonusly, openai, tenor
 
 
+def send_personalized_thank_you(recipients, total_amount):
+    amount = total_amount // len(recipients)
+    for handle in recipients:
+        name = handle[1:].replace(".", " ")
+        message = openai.generate_message(
+            f"Write something to thank {name} for the work they have done in the past month!",
+            temperature=0.9,
+        )
+        bonusly.create_bonus(
+            amount, [handle], message, img_url=tenor.pick_gif("high five")
+        )
+
+
 def main() -> None:
     myself = "@david.chu"
     core_analytics = [
@@ -18,15 +31,8 @@ def main() -> None:
     team = list(set(team) - set([myself]))
 
     balance = bonusly.my_current_balance()
-    if balance > len(team):
-        message = openai.generate_message(
-            "Write something to thank my team for the work they have done in the past month!",
-            temperature=0.9,
-        )
-
-        bonusly.create_bonus(
-            balance, team, message, img_url=tenor.pick_gif("high five")
-        )
+    if balance >= len(team):
+        send_personalized_thank_you(team, balance)
     else:
         print(f"Current balance {balance:,} is too low for {len(team)} recipients.")
 
