@@ -12,7 +12,7 @@ def main() -> None:
         "@matthew.crooks",
     ]
     team = bonusly.list_users("data enablement") + core_analytics
-    team.remove("@david.chu")
+    team = list(set(team) - set(["@david.chu"]))
 
     balance = bonusly.my_current_balance()
     if balance < len(team):
