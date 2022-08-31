@@ -19,8 +19,6 @@ def send_personalized_thank_you(recipients, total_amount):
 def main() -> None:
     myself = "@david.chu"
     core_analytics = [
-        "@connell.blackett",
-        "@eyuel.muse",
         "@ilmari.aalto",
         "@iris.miliaraki",
         "@oriol.monereo",
