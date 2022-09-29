@@ -25,7 +25,7 @@ def main() -> None:
         "@sarthak.jain",
         "@matthew.crooks",
     ]
-    team = bonusly.list_users("data enablement") + core_analytics
+    team = bonusly.list_users("data enablement") + bonusly.list_users("data science & ai") + core_analytics
     team = list(set(team) - set([myself]))
 
     balance = bonusly.my_current_balance()
