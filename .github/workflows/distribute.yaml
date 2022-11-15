@@ -1,8 +1,6 @@
 name: Give Typecoins
 
 on:
-  schedule:
-    - cron: "0 16 28-31 * *"
   workflow_dispatch:
 
 jobs:
